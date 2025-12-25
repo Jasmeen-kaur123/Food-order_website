@@ -2,3 +2,7 @@ node_modules/
 .env
 build/
 dist/
+# Ignore backend build outputs
+backend/target/
+# Ignore frontend production build (Vercel builds from source)
+frontend/build/
