@@ -2,39 +2,21 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { CartContext } from '../CartContext';
+import { ToastContext } from '../ToastContext';
 
 export default function Restaurant(){
   const { id } = useParams();
   const [restaurant, setRestaurant] = useState(null);
-  const [toast, setToast] = useState('');
-  const [toastVisible, setToastVisible] = useState(false);
   const { addItem } = useContext(CartContext);
-  const hideTimer = useRef(null);
+  const { addToast } = useContext(ToastContext);
 
   useEffect(()=>{
     axios.get(`/api/restaurants/${id}`).then(r => setRestaurant(r.data)).catch(console.error);
   },[id]);
 
-  useEffect(()=>{
-    return () => {
-      if(hideTimer.current){
-        clearTimeout(hideTimer.current);
-      }
-    };
-  },[]);
-
-  function showToast(message){
-    setToast(message);
-    setToastVisible(true);
-    if(hideTimer.current){
-      clearTimeout(hideTimer.current);
-    }
-    hideTimer.current = setTimeout(()=>setToastVisible(false),2000);
-  }
-
   function onAdd(menuItem){
     addItem({ name: menuItem.name, price: menuItem.price, quantity: 1, currency: restaurant.currency });
-    showToast(`${menuItem.name} added to cart`);
+    addToast(`${menuItem.name} added to cart`);
   }
 
   function getItemImage(itemName, index){
@@ -130,11 +112,6 @@ export default function Restaurant(){
           </div>
         ))}
       </div>
-      {toastVisible && (
-        <div className="toast">
-          <span role="status" aria-live="polite">{toast}</span>
-        </div>
-      )}
     </div>
   );
 }

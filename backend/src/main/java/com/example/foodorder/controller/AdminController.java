@@ -116,8 +116,18 @@ public class AdminController {
                 .filter(u -> u.getRoles() == null || !u.getRoles().contains("ROLE_ADMIN"))
                 .map(User::getId)
                 .collect(Collectors.toList());
-        if(userIds.isEmpty()) return java.util.Collections.emptyList();
-        return orderRepository.findByUserIdIn(userIds);
+        
+        List<Order> orders = new ArrayList<>();
+        
+        // Add orders from non-admin users
+        if(!userIds.isEmpty()){
+            orders.addAll(orderRepository.findByUserIdIn(userIds));
+        }
+        
+        // Add guest orders (orders with no userId)
+        orders.addAll(orderRepository.findByUserIdIsNull());
+        
+        return orders;
     }
 
     @PutMapping("/orders/{id}/accept")

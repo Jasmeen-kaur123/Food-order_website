@@ -9,4 +9,5 @@ public interface OrderRepository extends MongoRepository<Order, String> {
 	java.util.List<com.example.foodorder.model.Order> findByUserId(String userId);
 	java.util.List<com.example.foodorder.model.Order> findByStatus(String status);
 	java.util.List<com.example.foodorder.model.Order> findByUserIdIn(java.util.List<String> userIds);
+	java.util.List<com.example.foodorder.model.Order> findByUserIdIsNull();
 }

@@ -13,10 +13,12 @@ import AdminUserOrders from './pages/AdminUserOrders';
 import LoginHistory from './pages/LoginHistory';
 import { CartProvider } from './CartContext';
 import { AuthProvider } from './AuthContext';
+import { ToastProvider } from './ToastContext';
 import Navbar from './components/Navbar';
 
 function App(){
   return (
+    <ToastProvider>
     <AuthProvider>
     <CartProvider>
       <BrowserRouter>
@@ -41,6 +43,7 @@ function App(){
       </BrowserRouter>
     </CartProvider>
     </AuthProvider>
+    </ToastProvider>
   );
 }
 

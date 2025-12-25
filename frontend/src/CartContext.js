@@ -1,20 +1,27 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState, useContext } from 'react';
+import { AuthContext } from './AuthContext';
 
 export const CartContext = createContext();
 
 export function CartProvider({ children }){
-  const [items, setItems] = useState(() => {
+  const { user } = useContext(AuthContext);
+  const [items, setItems] = useState([]);
+
+  // Initialize and reload cart when user changes or role changes
+  useEffect(() => {
     try{
-      const raw = localStorage.getItem('cart');
-      return raw ? JSON.parse(raw) : [];
+      const cartKey = user && (user.roles||[]).includes('ROLE_ADMIN') ? 'admin_cart' : 'user_cart';
+      const raw = localStorage.getItem(cartKey);
+      setItems(raw ? JSON.parse(raw) : []);
     }catch(e){
-      return [];
+      setItems([]);
     }
-  });
+  }, [user]);
 
   useEffect(()=>{
-    localStorage.setItem('cart', JSON.stringify(items));
-  },[items]);
+    const cartKey = user && (user.roles||[]).includes('ROLE_ADMIN') ? 'admin_cart' : 'user_cart';
+    localStorage.setItem(cartKey, JSON.stringify(items));
+  },[items, user]);
 
   function addItem(item){
     setItems(prev => {
